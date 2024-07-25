@@ -2,36 +2,40 @@
 #include <time.h>
 #include <stdlib.h>
 
-void quicksort(int a[], int low, int high)
+void swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Partition function to place the pivot element in its correct position
+int partition(int arr[], int low, int high)
+{
+    int pivot = arr[high]; // Choosing the last element as the pivot
+    int i = low - 1;       // Index of the smaller element
+
+    for (int j = low; j < high; ++j)
+    {
+        if (arr[j] <= pivot)
+        {
+            ++i; // Increment index of smaller element
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1; // Return the partitioning index
+}
+
+// Recursive Quick sort function
+void quickSort(int arr[], int low, int high)
 {
     if (low < high)
     {
-        int pi = partition(a, low, high);
-
-        quicksort(a, low, pi - 1);
-        quicksort(a, pi + 1, high);
+        int pi = partition(arr, low, high); // Partitioning index
+        quickSort(arr, low, pi - 1);        // Recursively sort the left sub-array
+        quickSort(arr, pi + 1, high);       // Recursively sort the right sub-array
     }
-}
-
-int partition(int a[], int low, int high)
-{
-    int pivot = a[high];
-    int i = (low - 1);
-
-    for (int j = low; j < high; j++)
-    {
-        if (a[j] < pivot)
-        {
-            i++;
-            int temp = a[i];
-            a[i] = a[j];
-            a[j] = temp;
-        }
-    }
-    int temp = a[i + 1];
-    a[i + 1] = a[high];
-    a[high] = temp;
-    return (i + 1);
 }
 
 int main()
@@ -48,7 +52,7 @@ int main()
     clock_t start, end;
     double time_used;
     start = clock();
-    quicksort(a, 0, n - 1);
+    quickSort(a, 0, n - 1);
     end = clock();
     time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     printf("%f\n", time_used);
